@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tots_theme/tots_theme.dart';
 
 class LoginStyleOneScreen extends StatefulWidget {
-  const LoginStyleOneScreen({Key? key}) : super(key: key);
+
+  final Function(String, String)? onLogin;
+
+  const LoginStyleOneScreen({Key? key, this.onLogin}) : super(key: key);
 
   @override
   _LoginStyleOneScreenState createState() => _LoginStyleOneScreenState();
@@ -330,10 +333,14 @@ class _LoginStyleOneScreenState extends State<LoginStyleOneScreen> {
                       padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
                       child: MaterialButton(
                         onPressed: () async {
-                          if (formKey.currentState == null ||
-                              !formKey.currentState!.validate()) {
+                          if (formKey.currentState == null || !formKey.currentState!.validate() || widget.onLogin == null) {
                             return;
                           }
+
+                          widget.onLogin!(
+                            emailAddressFieldController?.text ?? '',
+                            passwordFieldController?.text ?? '',
+                          );
                         },
                         color: Colors.transparent,
                         elevation: 0,

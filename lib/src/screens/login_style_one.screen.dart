@@ -7,8 +7,9 @@ class LoginStyleOneScreen extends StatefulWidget {
   final String? imageLogo;
   final String? title;
   final String? subtitle;
+  final bool? isLoadingLogin;
 
-  const LoginStyleOneScreen({Key? key, this.onLogin, this.imageLogo, this.title, this.subtitle}) : super(key: key);
+  const LoginStyleOneScreen({Key? key, this.onLogin, this.imageLogo, this.title, this.subtitle, this.isLoadingLogin}) : super(key: key);
 
   @override
   _LoginStyleOneScreenState createState() => _LoginStyleOneScreenState();
@@ -62,6 +63,153 @@ class _LoginStyleOneScreenState extends State<LoginStyleOneScreen> {
     _unfocusNode.dispose();
 
     super.dispose();
+  }
+
+  Widget _buildLoginButton() {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+      child: OutlinedButton(
+        onPressed: () async {
+          if (formKey.currentState == null || !formKey.currentState!.validate() || widget.onLogin == null) {
+            return;
+          }
+
+          widget.onLogin!(
+            emailAddressFieldController?.text ?? '',
+            passwordFieldController?.text ?? '',
+          );
+        },
+        child: Container(
+          width: double.infinity,
+          height: 50,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                child: widget.isLoadingLogin != null && widget.isLoadingLogin! ? const CircularProgressIndicator() : Text('Log In', textAlign: TextAlign.center, style: TotsTheme().bodyMedium().copyWith(fontSize: 16,fontWeight: FontWeight.w600))
+              )
+            ]
+          )
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForgotPassword() {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
+      child: SelectionArea(
+          child: Text(
+        'Forget password?',
+        style: TotsTheme().bodyMedium().copyWith(
+              color: TotsTheme().primaryColor,
+              fontWeight: FontWeight.w600,
+            ),
+      )),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              SelectionArea(
+                  child: Text(
+                'Password',
+                style: TotsTheme()
+                    .bodyMedium()
+                    .copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+              )),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(0, 6, 0, 0),
+            child: TextFormField(
+              controller: passwordFieldController,
+              obscureText: !passwordFieldVisibility,
+              decoration: InputDecoration(
+                labelStyle: TotsTheme()
+                    .bodyMedium()
+                    .copyWith(
+                      color: TotsTheme().primaryText,
+                      fontSize: 16,
+                    ),
+                hintText: '••••••••',
+                hintStyle: TotsTheme()
+                    .bodyMedium()
+                    .copyWith(
+                      fontFamily: 'Inter',
+                      color: TotsTheme().secondaryText,
+                      fontSize: 16,
+                    ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Color(0xFFD0D5DD),
+                    width: 1,
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(8),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Color(0x00000000),
+                    width: 1,
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(8),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Color(0xFFFDA29B),
+                    width: 1,
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(8),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Color(0xFFFDA29B),
+                    width: 1,
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(8),
+                ),
+                contentPadding: const EdgeInsetsDirectional.fromSTEB(14, 10, 14, 10),
+                suffixIcon: InkWell(
+                  onTap: () => setState(
+                    () => passwordFieldVisibility = !passwordFieldVisibility,
+                  ),
+                  focusNode:
+                      FocusNode(skipTraversal: true),
+                  child: Icon(
+                    passwordFieldVisibility ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                    color: TotsTheme().secondaryText,
+                    size: 16,
+                  ),
+                ),
+              ),
+              style: TotsTheme()
+                  .bodyMedium()
+                  .copyWith(
+                    color: TotsTheme().primaryText,
+                    fontSize: 16,
+                  ),
+              validator: passwordFieldControllerValidator,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildEmailField() {
@@ -226,176 +374,13 @@ class _LoginStyleOneScreenState extends State<LoginStyleOneScreen> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             _buildEmailField(),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      SelectionArea(
-                                          child: Text(
-                                        'Password',
-                                        style: TotsTheme()
-                                            .bodyMedium()
-                                            .copyWith(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                      )),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(0, 6, 0, 0),
-                                    child: TextFormField(
-                                      controller: passwordFieldController,
-                                      obscureText: !passwordFieldVisibility,
-                                      decoration: InputDecoration(
-                                        labelStyle: TotsTheme()
-                                            .bodyMedium()
-                                            .copyWith(
-                                              color: TotsTheme().primaryText,
-                                              fontSize: 16,
-                                            ),
-                                        hintText: '••••••••',
-                                        hintStyle: TotsTheme()
-                                            .bodyMedium()
-                                            .copyWith(
-                                              fontFamily: 'Inter',
-                                              color: TotsTheme().secondaryText,
-                                              fontSize: 16,
-                                            ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Color(0xFFD0D5DD),
-                                            width: 1,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Color(0x00000000),
-                                            width: 1,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        errorBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Color(0xFFFDA29B),
-                                            width: 1,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Color(0xFFFDA29B),
-                                            width: 1,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        contentPadding: const EdgeInsetsDirectional.fromSTEB(14, 10, 14, 10),
-                                        suffixIcon: InkWell(
-                                          onTap: () => setState(
-                                            () => passwordFieldVisibility = !passwordFieldVisibility,
-                                          ),
-                                          focusNode:
-                                              FocusNode(skipTraversal: true),
-                                          child: Icon(
-                                            passwordFieldVisibility ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                                            color: TotsTheme().secondaryText,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                      style: TotsTheme()
-                                          .bodyMedium()
-                                          .copyWith(
-                                            color: TotsTheme().primaryText,
-                                            fontSize: 16,
-                                          ),
-                                      validator: passwordFieldControllerValidator,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            _buildPasswordField(),
                           ],
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
-                      child: SelectionArea(
-                          child: Text(
-                        'Forget password?',
-                        style: TotsTheme().bodyMedium().copyWith(
-                              color: TotsTheme().primaryColor,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      )),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                      child: MaterialButton(
-                        onPressed: () async {
-                          if (formKey.currentState == null || !formKey.currentState!.validate() || widget.onLogin == null) {
-                            return;
-                          }
-
-                          widget.onLogin!(
-                            emailAddressFieldController?.text ?? '',
-                            passwordFieldController?.text ?? '',
-                          );
-                        },
-                        color: Colors.transparent,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: Color(0xFFD0D5DD),
-                              width: 1,
-                            ),
-                          ),
-                          child: Align(
-                            alignment: AlignmentDirectional(0, 0),
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        12, 0, 0, 0),
-                                    child: SelectionArea(
-                                        child: Text(
-                                      'Log In',
-                                      style: TotsTheme()
-                                          .bodyMedium()
-                                          .copyWith(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    )),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    _buildForgotPassword(),
+                    _buildLoginButton(),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
                       child: Material(
